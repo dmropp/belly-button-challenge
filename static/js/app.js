@@ -35,8 +35,10 @@ d3.json(url).then(function(data) {
 
         }
 
+        // For loop to create array of OTU labels for chart hovertext
+        
         let sampleOTULabels = Object.values(data.samples[0].otu_labels).slice(0, 10).reverse();
-        console.log(sampleOTULabels.length);
+        // console.log(sampleOTULabels.length);
         let sampleOTUNames = [];
 
         for (let j = 0; j < sampleOTULabels.length; j++) {
@@ -70,6 +72,31 @@ d3.json(url).then(function(data) {
 
         Plotly.newPlot("plot", plotData, layout);
     }
+
+    
+    //For loop to append options from the names dataset to the dropdown menu
+    let dropdownRow = d3.selectAll("#selDataset");
+    let subjectIDs = Object.values(data.names);
+
+    for (let k = 0; k < subjectIDs.length; k++) {
+
+            row = dropdownRow.append("option").text(`${subjectIDs[k]}`);
+
+    }
+    
+    d3.selectAll("#selDataset").on("change", getData);
+
+    function getData() {
+
+        let dropdownMenu = d3.select("#selDataset");
+
+        let dataset = dropdownMenu.property("value");
+
+        let currentData = [];
+    }
+
+
+    // let row = dropdownRow.append("option").text("940");
 
     init();
 
