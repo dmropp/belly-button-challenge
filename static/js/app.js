@@ -7,44 +7,57 @@ d3.json(url).then(function(data) {
     
     console.log(data);
 
-    let patients = Object.values(data.samples);
-    console.log(patients);
+    // let patients = Object.values(data.samples);
+    // console.log(patients);
 
-    let labels = Object.keys(data.samples[0]);
-    console.log(labels);
+    // let labels = Object.keys(data.samples[0]);
+    // console.log(labels);
 
-    let patient = Object.values(data.samples[0]);
-    console.log(patient);
+    // let patient = Object.values(data.samples[0]);
+    // console.log(patient);
 
-    let sampleValues = Object.values(data.samples[0].sample_values);
-    console.log(sampleValues);
+    // let sampleValues = Object.values(data.samples[0].sample_values);
+    // console.log(sampleValues);
 
     function init() {
         
         // For loop to create array of otu labels for the chart as the values are stored as INTs and not strings in the original array
 
-        let sampleOTU = Object.values(data.samples[0].otu_ids).slice(0, 10).reverse();
+        let sampleOTUIDs = Object.values(data.samples[0].otu_ids).slice(0, 10).reverse();
 
-        let sampleOTUArray = [];
+        let sampleOTUIDArray = [];
         
-        for (let i = 0; i < sampleOTU.length; i++) {
+        for (let i = 0; i < sampleOTUIDs.length; i++) { // Can I make this a function for looping through the first 10 items in the array?
 
-            otu = `OSU ${sampleOTU[i]}`;
-            sampleOTUArray.push(otu);
+            otu = `OSU ${sampleOTUIDs[i]}`;
+            sampleOTUIDArray.push(otu);
 
+        }
+
+        let sampleOTULabels = Object.values(data.samples[0].otu_labels).slice(0, 10).reverse();
+        let sampleOTUNames = [];
+
+        for (let j = 0; j < sampleOTULabels.length; j++) {
+
+            otuLabel = sampleOTULabels[j];
+            console.log(otuLabel);
+            sampleOTULabels.push(otuLabel);
         }
 
         let plotData = [{
             x: Object.values(data.samples[0].sample_values.slice(0, 10)).reverse(),
             // y: Object.values(data.samples[0].otu_ids).slice(0, 10),
-            y: sampleOTUArray,
+            y: sampleOTUIDArray,
             type: "bar",
             orientation: "h"
         }];
 
         let layout = {
             // tickmode: "linear",
+
+            // https://plotly.com/python/tick-formatting/, referenced for tick formatting
             tickvals: Object.values(data.samples[0].otu_ids.slice(0, 10)),
+            // hovertext: sampleOTULabels, // https://plotly.com/python/reference/scatter/#scatter-hovertext, referenced for how to format hovertext
             height: 600,
             width: 400
         }
