@@ -81,6 +81,7 @@ d3.json(url).then(function(data) {
     for (let k = 0; k < subjectIDs.length; k++) {
 
             row = dropdownRow.append("option").text(`${subjectIDs[k]}`);
+            // row = dropdownRow.append("option", value=subjectIDs[k]).text(`${subjectIDs[k]}`).attr(subjectIDs[k]);
 
     }
     
@@ -92,7 +93,20 @@ d3.json(url).then(function(data) {
 
         let dataset = dropdownMenu.property("value");
 
-        let currentData = [];
+        console.log(dataset);
+
+        function selectValue(selectedID) {
+            return selectedID.samples.id === 940;
+        }
+
+        // let currentData = Object.values(data.samples["940"]).slice(0, 10).reverse(); //can't figure out how to access specific value, do I need to remap the array or filter data? Map to new array and then filter?
+        // map data to new array
+        // create filtering function to get value == to selected value
+        // call filtering function
+
+        let currentData = Object.values(data.samples.id.filter)
+        
+        console.log(currentData);
     }
 
 
