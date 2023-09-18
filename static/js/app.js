@@ -7,17 +7,17 @@ d3.json(url).then(function(data) {
     
     console.log(data);
 
-    // let patients = Object.values(data.samples);
-    // console.log(patients);
+    // // let patients = Object.values(data.samples);
+    // // console.log(patients);
 
-    // let labels = Object.keys(data.samples[0]);
-    // console.log(labels);
+    // // let labels = Object.keys(data.samples[0]);
+    // // console.log(labels);
 
-    // let patient = Object.values(data.samples[0]);
-    // console.log(patient);
+    // // let patient = Object.values(data.samples[0]);
+    // // console.log(patient);
 
-    // let sampleValues = Object.values(data.samples[0].sample_values);
-    // console.log(sampleValues);
+    // // let sampleValues = Object.values(data.samples[0].sample_values);
+    // // console.log(sampleValues);
 
     function init() {
         
@@ -30,24 +30,30 @@ d3.json(url).then(function(data) {
         for (let i = 0; i < sampleOTUIDs.length; i++) { // Can I make this a function for looping through the first 10 items in the array?
 
             otu = `OSU ${sampleOTUIDs[i]}`;
+            console.log(otu);
             sampleOTUIDArray.push(otu);
 
         }
 
         let sampleOTULabels = Object.values(data.samples[0].otu_labels).slice(0, 10).reverse();
+        console.log(sampleOTULabels.length);
         let sampleOTUNames = [];
 
         for (let j = 0; j < sampleOTULabels.length; j++) {
 
             otuLabel = sampleOTULabels[j];
             console.log(otuLabel);
-            sampleOTULabels.push(otuLabel);
+            sampleOTUNames.push(otuLabel);
         }
+
+        // console.log(sampleOTUIDArray.length);
+        // console.log(sampleOTUNames.length);
 
         let plotData = [{
             x: Object.values(data.samples[0].sample_values.slice(0, 10)).reverse(),
             // y: Object.values(data.samples[0].otu_ids).slice(0, 10),
             y: sampleOTUIDArray,
+            text: sampleOTUNames, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
             type: "bar",
             orientation: "h"
         }];
@@ -55,9 +61,9 @@ d3.json(url).then(function(data) {
         let layout = {
             // tickmode: "linear",
 
-            // https://plotly.com/python/tick-formatting/, referenced for tick formatting
+            // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
             tickvals: Object.values(data.samples[0].otu_ids.slice(0, 10)),
-            // hovertext: sampleOTULabels, // https://plotly.com/python/reference/scatter/#scatter-hovertext, referenced for how to format hovertext
+            // hovertext: sampleOTULabels, 
             height: 600,
             width: 400
         }
