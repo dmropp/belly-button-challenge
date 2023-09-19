@@ -33,9 +33,11 @@ function init(data) {
 
     barChartLabels = createLabels(data);
 
-    console.log(barChartLabels);
+    // console.log(barChartLabels);
 
     barChartHoverText = createHoverText(data);
+
+    console.log(barChartHoverText);
 
     barChartX = setX(data);
 
@@ -64,6 +66,7 @@ function init(data) {
     let bubbleChartData = [{ //https://plotly.com/javascript/bubble-charts/, referenced for creating bubble chart
         x: bubbleChartX,
         y: barChartX,
+        text: barChartHoverText,
         mode: "markers",
         marker: {
             size: barChartX
@@ -86,7 +89,7 @@ function createLabels (subjectData) {
     for (let i = 0; i < sampleOTUIDs.length; i++) { // Can I make this a function for looping through the first 10 items in the array?
 
         otu = `OTU ${sampleOTUIDs[i]}`;
-        console.log(otu);
+        // console.log(otu);
         sampleOTUIDArray.push(otu);
 
     } 
@@ -101,7 +104,7 @@ function createHoverText (data) {
     for (let j = 0; j < sampleOTULabels.length; j++) {
 
         otuLabel = sampleOTULabels[j];
-        console.log(otuLabel);
+        // console.log(otuLabel);
         sampleOTUNames.push(otuLabel);
     }
 
