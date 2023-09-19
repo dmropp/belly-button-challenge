@@ -22,7 +22,7 @@ d3.json(url).then(function(data) {
 
     }
 
-    init(patients);
+    init(patients[0]);
 });
 
 function init(data) {
@@ -59,7 +59,7 @@ function init(data) {
 }
 
 function createLabels (subjectData) {
-    let sampleOTUIDs = Object.values(subjectData[0].otu_ids).slice(0, 10).reverse();
+    let sampleOTUIDs = Object.values(subjectData.otu_ids).slice(0, 10).reverse();
 
     let sampleOTUIDArray = [];
     
@@ -75,7 +75,7 @@ function createLabels (subjectData) {
 }
 
 function createHoverText (data) {
-    let sampleOTULabels = Object.values(data[0].otu_labels).slice(0, 10).reverse();
+    let sampleOTULabels = Object.values(data.otu_labels).slice(0, 10).reverse();
     let sampleOTUNames = [];
 
     for (let j = 0; j < sampleOTULabels.length; j++) {
@@ -89,11 +89,11 @@ function createHoverText (data) {
 }
 
 function setX(data) {
-    return Object.values(data[0].sample_values.slice(0, 10)).reverse();
+    return Object.values(data.sample_values.slice(0, 10)).reverse();
 }
 
 function setTickValues(data) {
-    return Object.values(data[0].otu_ids.slice(0, 10));
+    return Object.values(data.otu_ids.slice(0, 10));
 }
 
 d3.selectAll("#selDataset").on("change", optionChanged);
@@ -120,5 +120,6 @@ function optionChanged(v) {
 
 //Need to reference Plotly documentation to figure out why this isn't working
 function updateBarChart(newData) {
-    Plotly.restyle("bar", setX, createLabels, [newData]);
+    console.log(newData[0]);
+    init(newData[0]);
 }
