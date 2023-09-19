@@ -41,7 +41,7 @@ function init(data) {
 
     barChartTickVals = setTickValues(data);
 
-    let plotData = [{
+    let barChartData = [{
         x: barChartX,
         y: barChartLabels,
         text: barChartHoverText, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
@@ -49,13 +49,31 @@ function init(data) {
         orientation: "h"
     }];
 
-    let layout = {
+    let barChartLayout = {
         tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
         height: 600,
         width: 400
     }
 
-    Plotly.newPlot("bar", plotData, layout);
+    Plotly.newPlot("bar", barChartData, barChartLayout);
+
+    // fix variable names because they're confusing
+
+    let bubbleChartData = [{
+        x: barChartLabels,
+        y: barChartX,
+        mode: "markers",
+        marker: {
+            size: barChartX
+        }
+    }]
+
+    let bubbleChartLayout = {
+        height: 600,
+        width: 600
+    }
+
+    Plotly.newPlot("bubble", bubbleChartData, bubbleChartLayout);
 }
 
 function createLabels (subjectData) {
