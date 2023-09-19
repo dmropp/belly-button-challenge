@@ -55,7 +55,7 @@ function init(data) {
         width: 400
     }
 
-    Plotly.newPlot("plot", plotData, layout);
+    Plotly.newPlot("bar", plotData, layout);
 }
 
 function createLabels (subjectData) {
@@ -118,7 +118,7 @@ function optionChanged(v) {
     updateBarChart(patientData);
 }
 
-// Need to reference Plotly documentation to figure out why this isn't working
+//Need to reference Plotly documentation to figure out why this isn't working
 function updateBarChart(newData) {
-        Plotly.restyle("bar", setX, createLabels, [newData]);
+    Plotly.restyle("bar", setX, createLabels, [newData]);
 }
