@@ -7,17 +7,18 @@ d3.json(url).then(function(data) {
     
     console.log(data);
 
-    // // let patients = Object.values(data.samples);
-    // // console.log(patients);
+    let patients = Object.values(data.samples);
+    console.log(patients);
 
-    // // let labels = Object.keys(data.samples[0]);
-    // // console.log(labels);
+    //For loop to append options from the names dataset to the dropdown menu
+    let dropdownRow = d3.selectAll("#selDataset");
+    let subjectIDs = Object.values(data.names);
 
-    // // let patient = Object.values(data.samples[0]);
-    // // console.log(patient);
+    for (let k = 0; k < subjectIDs.length; k++) {
 
-    // // let sampleValues = Object.values(data.samples[0].sample_values);
-    // // console.log(sampleValues);
+            row = dropdownRow.append("option").text(`${subjectIDs[k]}`);
+
+    }
 
     function init() {
         
@@ -33,12 +34,11 @@ d3.json(url).then(function(data) {
             console.log(otu);
             sampleOTUIDArray.push(otu);
 
-        }
-
+        } 
+        
         // For loop to create array of OTU labels for chart hovertext
         
         let sampleOTULabels = Object.values(data.samples[0].otu_labels).slice(0, 10).reverse();
-        // console.log(sampleOTULabels.length);
         let sampleOTUNames = [];
 
         for (let j = 0; j < sampleOTULabels.length; j++) {
@@ -48,12 +48,8 @@ d3.json(url).then(function(data) {
             sampleOTUNames.push(otuLabel);
         }
 
-        // console.log(sampleOTUIDArray.length);
-        // console.log(sampleOTUNames.length);
-
         let plotData = [{
             x: Object.values(data.samples[0].sample_values.slice(0, 10)).reverse(),
-            // y: Object.values(data.samples[0].otu_ids).slice(0, 10),
             y: sampleOTUIDArray,
             text: sampleOTUNames, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
             type: "bar",
@@ -61,33 +57,19 @@ d3.json(url).then(function(data) {
         }];
 
         let layout = {
-            // tickmode: "linear",
-
-            // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
-            tickvals: Object.values(data.samples[0].otu_ids.slice(0, 10)),
-            // hovertext: sampleOTULabels, 
+            tickvals: Object.values(data.samples[0].otu_ids.slice(0, 10)), // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
             height: 600,
             width: 400
         }
 
         Plotly.newPlot("plot", plotData, layout);
     }
-
     
-    //For loop to append options from the names dataset to the dropdown menu
-    let dropdownRow = d3.selectAll("#selDataset");
-    let subjectIDs = Object.values(data.names);
+    d3.selectAll("#selDataset").on("change", optionChanged);
 
-    for (let k = 0; k < subjectIDs.length; k++) {
+    function optionChanged(v) {
 
-            row = dropdownRow.append("option").text(`${subjectIDs[k]}`);
-            // row = dropdownRow.append("option", value=subjectIDs[k]).text(`${subjectIDs[k]}`).attr(subjectIDs[k]);
-
-    }
-    
-    d3.selectAll("#selDataset").on("change", getData);
-
-    function getData() {
+        console.log(v);
 
         let dropdownMenu = d3.select("#selDataset");
 
@@ -96,25 +78,19 @@ d3.json(url).then(function(data) {
         console.log(dataset);
 
         function selectValue(selectedID) {
-            return selectedID.samples.id === 940;
+            return selectedID.id === dataset;
         }
 
-        //call optionChanged
+        let patientData = patients.filter(selectValue);
 
-        // let currentData = Object.values(data.samples["940"]).slice(0, 10).reverse(); //can't figure out how to access specific value, do I need to remap the array or filter data? Map to new array and then filter?
-        // map data to new array
-        // create filtering function to get value == to selected value
-        // call filtering function
+        console.log(patientData);
 
-        // let currentData = Object.values(data.samples.id.filter)
-        
-        // console.log(currentData);
+        updateBarChart(patientData);
     }
 
-    //update graph function call optionChanged
-
-
-    // let row = dropdownRow.append("option").text("940");
+    function updateBarChart(newData) {
+        Plotly.restyle("bar", "x", "y", [newData]);
+    }
 
     init();
 
