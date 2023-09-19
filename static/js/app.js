@@ -1,9 +1,7 @@
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-// const dataPromise = d3.json(url);
-// console.log("Data Promise", dataPromise);
+// https://stackoverflow.com/questions/12656580/returning-array-from-d3-json, referenced for how to use D3.json()
 
-// may need to create separate function outside of json call for manipulating data. Going to leave on change outside JSON function and see if that works
 var patients;
 
 
@@ -24,18 +22,44 @@ d3.json(url).then(function(data) {
 
     }
 
-    init();
+    init(patients);
 });
 
-function init() {
+function init(data) {
     
     // For loop to create array of otu labels for the chart as the values are stored as INTs and not strings in the original array
 
-    // let sampleOTUIDs = Object.values(data.samples[0].otu_ids).slice(0, 10).reverse();
+    console.log(data);
 
-    console.log(patients);
+    barChartLabels = createLabels(data);
 
-    let sampleOTUIDs = Object.values(patients[0].otu_ids).slice(0, 10).reverse();
+    console.log(barChartLabels);
+
+    barChartHoverText = createHoverText(data);
+
+    barChartX = setX(data);
+
+    barChartTickVals = setTickValues(data);
+
+    let plotData = [{
+        x: barChartX,
+        y: barChartLabels,
+        text: barChartHoverText, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
+        type: "bar",
+        orientation: "h"
+    }];
+
+    let layout = {
+        tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
+        height: 600,
+        width: 400
+    }
+
+    Plotly.newPlot("plot", plotData, layout);
+}
+
+function createLabels (subjectData) {
+    let sampleOTUIDs = Object.values(subjectData[0].otu_ids).slice(0, 10).reverse();
 
     let sampleOTUIDArray = [];
     
@@ -47,11 +71,11 @@ function init() {
 
     } 
 
-    console.log(sampleOTUIDArray);
-    
-    // For loop to create array of OTU labels for chart hovertext
-    
-    let sampleOTULabels = Object.values(patients[0].otu_labels).slice(0, 10).reverse();
+    return sampleOTUIDArray;
+}
+
+function createHoverText (data) {
+    let sampleOTULabels = Object.values(data[0].otu_labels).slice(0, 10).reverse();
     let sampleOTUNames = [];
 
     for (let j = 0; j < sampleOTULabels.length; j++) {
@@ -61,49 +85,16 @@ function init() {
         sampleOTUNames.push(otuLabel);
     }
 
-    let plotData = [{
-        x: Object.values(patients[0].sample_values.slice(0, 10)).reverse(),
-        y: sampleOTUIDArray,
-        text: sampleOTUNames, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
-        type: "bar",
-        orientation: "h"
-    }];
-
-    let layout = {
-        tickvals: Object.values(patients[0].otu_ids.slice(0, 10)), // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
-        height: 600,
-        width: 400
-    }
-
-    Plotly.newPlot("plot", plotData, layout);
+    return sampleOTUNames;
 }
 
-// d3.selectAll("#selDataset").on("change", optionChanged);
+function setX(data) {
+    return Object.values(data[0].sample_values.slice(0, 10)).reverse();
+}
 
-// function optionChanged() {
-
-//     let dropdownMenu = d3.select("#selDataset");
-
-//     let dataset = dropdownMenu.property("value");
-
-//     console.log(dataset);
-
-//     function selectValue(selectedID) {
-//         return selectedID.id === dataset;
-//     }
-
-//     let patientData = patients.filter(selectValue);
-
-//     console.log(patientData);
-
-//     updateBarChart(patientData);
-// }
-
-// function updateBarChart(newData) {
-//     Plotly.restyle("bar", "x", "y", [newData]);
-// }
-
-// init();
+function setTickValues(data) {
+    return Object.values(data[0].otu_ids.slice(0, 10));
+}
 
 d3.selectAll("#selDataset").on("change", optionChanged);
 
@@ -112,21 +103,22 @@ function optionChanged(v) {
 
     let dropdownMenu = d3.select("#selDataset");
 
-        let dataset = dropdownMenu.property("value");
+    let dataset = dropdownMenu.property("value");
 
-        console.log(dataset);
+    console.log(dataset);
 
-        function selectValue(selectedID) {
-            return selectedID.id === dataset;
-        }
+    function selectValue(selectedID) {
+        return selectedID.id === dataset;
+    }
 
-        let patientData = patients.filter(selectValue);
+    let patientData = patients.filter(selectValue);
 
-        console.log(patientData);
+    console.log(patientData);
 
-        updateBarChart(patientData);
+    updateBarChart(patientData);
 }
 
+// Need to reference Plotly documentation to figure out why this isn't working
 function updateBarChart(newData) {
-        Plotly.restyle("bar", "x", "y", [newData]);
+        Plotly.restyle("bar", setX, createLabels, [newData]);
 }
