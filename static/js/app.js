@@ -59,7 +59,7 @@ function init(data) {
 
     // fix variable names because they're confusing
 
-    let bubbleChartData = [{
+    let bubbleChartData = [{ //https://plotly.com/javascript/bubble-charts/, referenced for creating bubble chart
         x: barChartLabels,
         y: barChartX,
         mode: "markers",
