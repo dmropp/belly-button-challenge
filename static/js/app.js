@@ -41,10 +41,12 @@ function init(data) {
 
     barChartTickVals = setTickValues(data);
 
+    bubbleChartX = setBubbleChartX(data);
+
     let barChartData = [{
-        x: barChartX,
-        y: barChartLabels,
-        text: barChartHoverText, // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
+        x: barChartX.slice(0, 10).reverse(),
+        y: barChartLabels.slice(0, 10).reverse(),
+        text: barChartHoverText.slice(0, 10).reverse(), // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
         type: "bar",
         orientation: "h"
     }];
@@ -60,7 +62,7 @@ function init(data) {
     // fix variable names because they're confusing
 
     let bubbleChartData = [{ //https://plotly.com/javascript/bubble-charts/, referenced for creating bubble chart
-        x: barChartLabels,
+        x: bubbleChartX,
         y: barChartX,
         mode: "markers",
         marker: {
@@ -69,21 +71,21 @@ function init(data) {
     }]
 
     let bubbleChartLayout = {
-        height: 600,
-        width: 600
+        height: 400,
+        width: 1200
     }
 
     Plotly.newPlot("bubble", bubbleChartData, bubbleChartLayout);
 }
 
 function createLabels (subjectData) {
-    let sampleOTUIDs = Object.values(subjectData.otu_ids).slice(0, 10).reverse();
+    let sampleOTUIDs = Object.values(subjectData.otu_ids);
 
     let sampleOTUIDArray = [];
     
     for (let i = 0; i < sampleOTUIDs.length; i++) { // Can I make this a function for looping through the first 10 items in the array?
 
-        otu = `OSU ${sampleOTUIDs[i]}`;
+        otu = `OTU ${sampleOTUIDs[i]}`;
         console.log(otu);
         sampleOTUIDArray.push(otu);
 
@@ -93,7 +95,7 @@ function createLabels (subjectData) {
 }
 
 function createHoverText (data) {
-    let sampleOTULabels = Object.values(data.otu_labels).slice(0, 10).reverse();
+    let sampleOTULabels = Object.values(data.otu_labels);
     let sampleOTUNames = [];
 
     for (let j = 0; j < sampleOTULabels.length; j++) {
@@ -107,7 +109,13 @@ function createHoverText (data) {
 }
 
 function setX(data) {
-    return Object.values(data.sample_values.slice(0, 10)).reverse();
+    // return Object.values(data.sample_values.slice(0, 10)).reverse();
+    return Object.values(data.sample_values);
+}
+
+function setBubbleChartX(data) {
+    // return Object.values(data.sample_values.slice(0, 10)).reverse();
+    return Object.values(data.otu_ids);
 }
 
 function setTickValues(data) {
