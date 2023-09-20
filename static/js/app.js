@@ -62,7 +62,7 @@ function init(data, metaData) {
         tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
         height: 600,
         width: 400
-    }
+    };
 
     Plotly.newPlot("bar", barChartData, barChartLayout);
 
@@ -77,13 +77,13 @@ function init(data, metaData) {
             size: barChartX,
             color: bubbleChartX,
         }
-    }]
+    }];
 
     let bubbleChartLayout = {
         xaxis: {title: "OTU ID"}, // https://plotly.com/javascript/line-charts/, referenced for how to set x axis title
         height: 400,
         width: 1200
-    }
+    };
 
     Plotly.newPlot("bubble", bubbleChartData, bubbleChartLayout);
 
@@ -99,13 +99,29 @@ function init(data, metaData) {
     metadataField.append("p").text(`bbtype: ${metaData.bbtype}`);
     metadataField.append("p").text(`wfreq: ${metaData.wfreq}`);
 
+    let gaugeChartData = [{
+        domain: {x: [0, 1], y: [0, 1]},
+        value: 4,
+        type: "indicator",
+        mode: "gauge+number",
+        gauge: {
+            axis: {range: [null, 10]},
+            steps: [
+                {range: [0, 2], color: "red"},
+                {range: [2, 4], color: "orange"},
+                {range: [4, 6], color: "yellow"},
+                {range: [6, 8], color: "green"},
+                {range: [8, 10], color: "blue"}
+            ]
+        }
+    }];
 
-    // for (a = 0; a < metadataText.length; a++) {
-    //     row = metadataField.append("tr").text(metadataText[a]);
-    // }
-    // metadataField.append("p").text(metaData.id);
-    //metadataField.text(metaData.ethnicity);
-    // do I need to create a function that maps the data?
+    let gaugeChartLayout = {
+        width: 600,
+        height: 600,
+    };
+
+    Plotly.newPlot("gauge", gaugeChartData, gaugeChartLayout);
 }
 
 function createLabels (subjectData) {
