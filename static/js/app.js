@@ -75,11 +75,12 @@ function init(data, metaData) {
         mode: "markers",
         marker: {
             size: barChartX,
-            //color: set colors based on otu_ids
+            color: bubbleChartX,
         }
     }]
 
     let bubbleChartLayout = {
+        xaxis: {title: "OTU ID"}, // https://plotly.com/javascript/line-charts/, referenced for how to set x axis title
         height: 400,
         width: 1200
     }
