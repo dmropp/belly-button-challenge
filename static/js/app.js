@@ -89,6 +89,7 @@ function init(data, metaData) {
     // call function to populate sample metadata div id sample-metadata
     // populateMetadata(data);
     metadataField = d3.select("#sample-metadata");
+    metadataField.text(""); //https://stackoverflow.com/questions/5744233/how-to-empty-the-content-of-a-div, referenced for how to clear a div
     metadataField.append("p").text(`id: ${metaData.id}`); //figure out if these need to be inserted as lines or line breaks
     metadataField.append("p").text(`ethnicity: ${metaData.ethnicity}`);
     metadataField.append("p").text(`gender: ${metaData.gender}`);
@@ -165,13 +166,20 @@ function optionChanged(v) {
         return selectedID.id === dataset;
     }
 
+    function selectInteger(selectedInt) {
+        return selectedInt.id === parseInt(dataset);
+    }
+
     let patientData = patients.filter(selectValue);
+    let updatedMetadata = patientMetadata.filter(selectInteger);
+
+    console.log(updatedMetadata);
 
     // console.log(patientData);
 
     // updateBarChart(patientData);
 
-    init(patientData[0]);
+    init(patientData[0], updatedMetadata[0]);
 }
 
 //Need to reference Plotly documentation to figure out why this isn't working
