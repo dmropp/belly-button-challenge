@@ -91,7 +91,7 @@ function init(data, metaData) {
     // populateMetadata(data);
     metadataField = d3.select("#sample-metadata");
     metadataField.text(""); //https://stackoverflow.com/questions/5744233/how-to-empty-the-content-of-a-div, referenced for how to clear a div
-    metadataField.append("p").text(`id: ${metaData.id}`); //figure out if these need to be inserted as lines or line breaks
+    metadataField.append("p").text(`id: ${metaData.id}`);
     metadataField.append("p").text(`ethnicity: ${metaData.ethnicity}`);
     metadataField.append("p").text(`gender: ${metaData.gender}`);
     metadataField.append("p").text(`age: ${metaData.age}`);
@@ -99,19 +99,26 @@ function init(data, metaData) {
     metadataField.append("p").text(`bbtype: ${metaData.bbtype}`);
     metadataField.append("p").text(`wfreq: ${metaData.wfreq}`);
 
-    let gaugeChartData = [{
+    let gaugeChartData = [{  //https://plotly.com/javascript/gauge-charts/, referenced for how to make gauge charts
         domain: {x: [0, 1], y: [0, 1]},
-        value: 4,
+        value: metaData.wfreq,
+        title: "Belly Button Washing Frequency <br> Scrubs per Week", //https://forum.freecodecamp.org/t/how-to-add-new-line-in-string/17763, referenced for how to add line breaks
         type: "indicator",
         mode: "gauge+number",
         gauge: {
             axis: {range: [null, 10]},
+            bar: {color: "darkblue"},
             steps: [
-                {range: [0, 2], color: "red"},
-                {range: [2, 4], color: "orange"},
-                {range: [4, 6], color: "yellow"},
-                {range: [6, 8], color: "green"},
-                {range: [8, 10], color: "blue"}
+                {range: [0, 1], color: "darkred"}, // https://www.w3schools.com/cssref/css_colors.php, used for color reference
+                {range: [1, 2], color: "firebrick"},
+                {range: [2, 3], color: "indianred"},
+                {range: [3, 4], color: "lightpink"},
+                {range: [4, 5], color: "snow"},
+                {range: [5, 6], color: "palegreen"},
+                {range: [6, 7], color: "lightgreen"},
+                {range: [7, 8], color: "forestgreen"},
+                {range: [8, 9], color: "green"},
+                {range: [9, 10], color: "darkgreen"}
             ]
         }
     }];
