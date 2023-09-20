@@ -2,7 +2,8 @@ const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/
 
 // https://stackoverflow.com/questions/12656580/returning-array-from-d3-json, referenced for how to use D3.json()
 
-var patients;
+var patients; //probably will need to fix global variable to include whole dataset
+var patientMetadata;
 
 
 d3.json(url).then(function(data) {
@@ -10,7 +11,11 @@ d3.json(url).then(function(data) {
     console.log(data);
 
     patients = Object.values(data.samples);
+    // patients = Object.values(data);
     console.log(patients);
+
+    patientMetadata = Object.values(data.metadata);
+    console.log(patientMetadata);
 
     //For loop to append options from the names dataset to the dropdown menu
     let dropdownRow = d3.selectAll("#selDataset");
@@ -22,10 +27,10 @@ d3.json(url).then(function(data) {
 
     }
 
-    init(patients[0]);
+    init(patients[0], patientMetadata[0]);
 });
 
-function init(data) {
+function init(data, metaData) {
     
     // For loop to create array of otu labels for the chart as the values are stored as INTs and not strings in the original array
 
@@ -37,7 +42,7 @@ function init(data) {
 
     barChartHoverText = createHoverText(data);
 
-    console.log(barChartHoverText);
+    // console.log(barChartHoverText);
 
     barChartX = setX(data);
 
@@ -69,7 +74,8 @@ function init(data) {
         text: barChartHoverText,
         mode: "markers",
         marker: {
-            size: barChartX
+            size: barChartX,
+            //color: set colors based on otu_ids
         }
     }]
 
@@ -79,6 +85,25 @@ function init(data) {
     }
 
     Plotly.newPlot("bubble", bubbleChartData, bubbleChartLayout);
+
+    // call function to populate sample metadata div id sample-metadata
+    // populateMetadata(data);
+    metadataField = d3.select("#sample-metadata");
+    metadataField.append("p").text(`id: ${metaData.id}`); //figure out if these need to be inserted as lines or line breaks
+    metadataField.append("p").text(`ethnicity: ${metaData.ethnicity}`);
+    metadataField.append("p").text(`gender: ${metaData.gender}`);
+    metadataField.append("p").text(`age: ${metaData.age}`);
+    metadataField.append("p").text(`location: ${metaData.location}`);
+    metadataField.append("p").text(`bbtype: ${metaData.bbtype}`);
+    metadataField.append("p").text(`wfreq: ${metaData.wfreq}`);
+
+
+    // for (a = 0; a < metadataText.length; a++) {
+    //     row = metadataField.append("tr").text(metadataText[a]);
+    // }
+    // metadataField.append("p").text(metaData.id);
+    //metadataField.text(metaData.ethnicity);
+    // do I need to create a function that maps the data?
 }
 
 function createLabels (subjectData) {
@@ -142,13 +167,16 @@ function optionChanged(v) {
 
     let patientData = patients.filter(selectValue);
 
-    console.log(patientData);
+    // console.log(patientData);
 
-    updateBarChart(patientData);
+    // updateBarChart(patientData);
+
+    init(patientData[0]);
 }
 
 //Need to reference Plotly documentation to figure out why this isn't working
-function updateBarChart(newData) {
-    console.log(newData[0]);
-    init(newData[0]);
-}
+//Do I need this function?
+// function updateBarChart(newData) {
+//     console.log(newData[0]);
+//     init(newData[0]);
+// }
