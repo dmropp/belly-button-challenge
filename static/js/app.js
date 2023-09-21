@@ -24,23 +24,22 @@ d3.json(url).then(function(data) {
 function init(data, metaData) {
     
     // Call functions to assign variables that will be used for plots
-    barChartLabels = createLabels(data);
-    barChartHoverText = createHoverText(data);
-    barChartX = setX(data);
-    bubbleChartX = setBubbleChartX(data);
+    let barChartLabels = createLabels(data);
+    let hoverText = createHoverText(data);
+    let otuCounts = setOTUCounts(data);
+    let otuIDNumbers = setOTUIDNumbers(data);
 
     // Create bar plot
     let barChartData = [{
-        x: barChartX.slice(0, 10).reverse(),
+        x: otuCounts.slice(0, 10).reverse(),
         y: barChartLabels.slice(0, 10).reverse(),
-        text: barChartHoverText.slice(0, 10).reverse(), // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
+        text: hoverText.slice(0, 10).reverse(), // https://plotly.com/javascript/hover-text-and-formatting/, referenced for how to format hovertext
         type: "bar",
         orientation: "h"
     }];
 
     let barChartLayout = {
-        //tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
-        tickvals: bubbleChartX.slice(0, 10),
+        tickvals: otuIDNumbers.slice(0, 10), // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
         height: 600,
         width: 400
     };
@@ -49,13 +48,13 @@ function init(data, metaData) {
 
     // Create bubble plot
     let bubbleChartData = [{ //https://plotly.com/javascript/bubble-charts/, referenced for creating bubble chart
-        x: bubbleChartX,
-        y: barChartX,
-        text: barChartHoverText,
+        x: otuIDNumbers,
+        y: otuCounts,
+        text: hoverText,
         mode: "markers",
         marker: {
-            size: barChartX,
-            color: bubbleChartX,
+            size: otuCounts,
+            color: otuIDNumbers,
         }
     }];
 
@@ -128,24 +127,24 @@ function createLabels (subjectData) {
 // Function to create plot hovertext
 function createHoverText (data) {
 
-    let sampleOTULabels = Object.values(data.otu_labels);
-    let sampleOTUNames = [];
+    let microbeNames = Object.values(data.otu_labels);
+    let microbeNameArray = [];
 
-    for (let j = 0; j < sampleOTULabels.length; j++) {
-        otuLabel = sampleOTULabels[j];
-        sampleOTUNames.push(otuLabel);
+    for (let j = 0; j < microbeNames.length; j++) {
+        microbes = microbeNames[j];
+        microbeNameArray.push(microbes);
     }
 
-    return sampleOTUNames;
+    return microbeNameArray;
 }
 
 // Function to store OTU counts
-function setX(data) {
+function setOTUCounts(data) {
     return Object.values(data.sample_values);
 }
 
 // Function to store just OTU id integer
-function setBubbleChartX(data) {
+function setOTUIDNumbers(data) {
     return Object.values(data.otu_ids);
 }
 
