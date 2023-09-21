@@ -1,55 +1,35 @@
 const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
+var patients; // variable to store subject sample data
+var patientMetadata; // variable to store subject metadata/demographic data
+
 // https://stackoverflow.com/questions/12656580/returning-array-from-d3-json, referenced for how to use D3.json()
-
-var patients; //probably will need to fix global variable to include whole dataset
-var patientMetadata;
-
-
 d3.json(url).then(function(data) {
     
-    console.log(data);
-
     patients = Object.values(data.samples);
-    // patients = Object.values(data);
-    console.log(patients);
-
     patientMetadata = Object.values(data.metadata);
-    console.log(patientMetadata);
 
     //For loop to append options from the names dataset to the dropdown menu
     let dropdownRow = d3.selectAll("#selDataset");
     let subjectIDs = Object.values(data.names);
 
     for (let k = 0; k < subjectIDs.length; k++) {
-
             row = dropdownRow.append("option").text(`${subjectIDs[k]}`);
-
     }
 
     init(patients[0], patientMetadata[0]);
 });
 
+// Function to create and populate bar plot, bubble plot, gauge plot, and subject demographic/metadata
 function init(data, metaData) {
     
-    // For loop to create array of otu labels for the chart as the values are stored as INTs and not strings in the original array
-
-    console.log(data);
-
+    // Call functions to assign variables that will be used for plots
     barChartLabels = createLabels(data);
-
-    // console.log(barChartLabels);
-
     barChartHoverText = createHoverText(data);
-
-    // console.log(barChartHoverText);
-
     barChartX = setX(data);
-
-    barChartTickVals = setTickValues(data);
-
     bubbleChartX = setBubbleChartX(data);
 
+    // Create bar plot
     let barChartData = [{
         x: barChartX.slice(0, 10).reverse(),
         y: barChartLabels.slice(0, 10).reverse(),
@@ -59,15 +39,15 @@ function init(data, metaData) {
     }];
 
     let barChartLayout = {
-        tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
+        //tickvals: barChartTickVals, // https://plotly.com/javascript/tick-formatting/, referenced for tick formatting
+        tickvals: bubbleChartX.slice(0, 10),
         height: 600,
         width: 400
     };
 
     Plotly.newPlot("bar", barChartData, barChartLayout);
 
-    // fix variable names because they're confusing
-
+    // Create bubble plot
     let bubbleChartData = [{ //https://plotly.com/javascript/bubble-charts/, referenced for creating bubble chart
         x: bubbleChartX,
         y: barChartX,
@@ -87,18 +67,7 @@ function init(data, metaData) {
 
     Plotly.newPlot("bubble", bubbleChartData, bubbleChartLayout);
 
-    // call function to populate sample metadata div id sample-metadata
-    // populateMetadata(data);
-    metadataField = d3.select("#sample-metadata");
-    metadataField.text(""); //https://stackoverflow.com/questions/5744233/how-to-empty-the-content-of-a-div, referenced for how to clear a div
-    metadataField.append("p").text(`id: ${metaData.id}`);
-    metadataField.append("p").text(`ethnicity: ${metaData.ethnicity}`);
-    metadataField.append("p").text(`gender: ${metaData.gender}`);
-    metadataField.append("p").text(`age: ${metaData.age}`);
-    metadataField.append("p").text(`location: ${metaData.location}`);
-    metadataField.append("p").text(`bbtype: ${metaData.bbtype}`);
-    metadataField.append("p").text(`wfreq: ${metaData.wfreq}`);
-
+    // Create gauge plot
     let gaugeChartData = [{  //https://plotly.com/javascript/gauge-charts/, referenced for how to make gauge charts
         domain: {x: [0, 1], y: [0, 1]},
         value: metaData.wfreq,
@@ -129,86 +98,78 @@ function init(data, metaData) {
     };
 
     Plotly.newPlot("gauge", gaugeChartData, gaugeChartLayout);
+
+    // Populate demographic field with subject metadata
+    metadataField = d3.select("#sample-metadata");
+    metadataField.text(""); //https://stackoverflow.com/questions/5744233/how-to-empty-the-content-of-a-div, referenced for how to clear a div
+    metadataField.append("p").text(`id: ${metaData.id}`);
+    metadataField.append("p").text(`ethnicity: ${metaData.ethnicity}`);
+    metadataField.append("p").text(`gender: ${metaData.gender}`);
+    metadataField.append("p").text(`age: ${metaData.age}`);
+    metadataField.append("p").text(`location: ${metaData.location}`);
+    metadataField.append("p").text(`bbtype: ${metaData.bbtype}`);
+    metadataField.append("p").text(`wfreq: ${metaData.wfreq}`);
 }
 
+// Function to create x axis tick labels for bar plot, converting from int to string with 'OTU' preceding the OTU ID number
 function createLabels (subjectData) {
-    let sampleOTUIDs = Object.values(subjectData.otu_ids);
 
+    let sampleOTUIDs = Object.values(subjectData.otu_ids);
     let sampleOTUIDArray = [];
     
-    for (let i = 0; i < sampleOTUIDs.length; i++) { // Can I make this a function for looping through the first 10 items in the array?
-
+    for (let i = 0; i < sampleOTUIDs.length; i++) { 
         otu = `OTU ${sampleOTUIDs[i]}`;
-        // console.log(otu);
         sampleOTUIDArray.push(otu);
-
     } 
 
     return sampleOTUIDArray;
 }
 
+// Function to create plot hovertext
 function createHoverText (data) {
+
     let sampleOTULabels = Object.values(data.otu_labels);
     let sampleOTUNames = [];
 
     for (let j = 0; j < sampleOTULabels.length; j++) {
-
         otuLabel = sampleOTULabels[j];
-        // console.log(otuLabel);
         sampleOTUNames.push(otuLabel);
     }
 
     return sampleOTUNames;
 }
 
+// Function to store OTU counts
 function setX(data) {
-    // return Object.values(data.sample_values.slice(0, 10)).reverse();
     return Object.values(data.sample_values);
 }
 
+// Function to store just OTU id integer
 function setBubbleChartX(data) {
-    // return Object.values(data.sample_values.slice(0, 10)).reverse();
     return Object.values(data.otu_ids);
 }
 
-function setTickValues(data) {
-    return Object.values(data.otu_ids.slice(0, 10));
-}
-
+// Method called when new value is selected in dropdown
 d3.selectAll("#selDataset").on("change", optionChanged);
 
-function optionChanged(v) {
-    console.log(v);
-
+// Function to assign value selected in the dropdown menu to a variable, and the pass the variable to update plots and demographic data
+function optionChanged() {
+    
     let dropdownMenu = d3.select("#selDataset");
-
     let dataset = dropdownMenu.property("value");
 
-    console.log(dataset);
-
+    // Function to filter sample data to select sample data for subject ID chosen in the dropdown menu
     function selectValue(selectedID) {
         return selectedID.id === dataset;
     }
 
+    // Function to filter metadata to select metadata for subject ID chosed in the dropdown menu
     function selectInteger(selectedInt) {
-        return selectedInt.id === parseInt(dataset);
+        return selectedInt.id === parseInt(dataset); // Subject ID stored as string in metadata, needed to be converted to int
     }
 
     let patientData = patients.filter(selectValue);
     let updatedMetadata = patientMetadata.filter(selectInteger);
 
-    console.log(updatedMetadata);
-
-    // console.log(patientData);
-
-    // updateBarChart(patientData);
-
-    init(patientData[0], updatedMetadata[0]);
+    init(patientData[0], updatedMetadata[0]); // Call function to update plots and demographic data with selected subject
 }
-
-//Need to reference Plotly documentation to figure out why this isn't working
-//Do I need this function?
-// function updateBarChart(newData) {
-//     console.log(newData[0]);
-//     init(newData[0]);
-// }
